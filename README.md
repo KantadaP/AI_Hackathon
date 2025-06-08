@@ -1,12 +1,22 @@
-# React + Vite
+Here's your updated and polished README with emojis and a section about the **Final Round with 12 Teams**:
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+# 🧠 AI Hackathon Interface
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project is a **dummy interface** for a **Survey AI** tool that helps users create surveys and automatically summarize the responses using AI.
 
-## Expanding the ESLint configuration
+## 🛠 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* ⚛️ **Frontend**: React (Vite)
+* 🎨 **Styling**: Tailwind CSS
+* 💾 **Storage**: LocalStorage
+* 🤖 **AI Integration**: Azure OpenAI (as the LLM)
+
+## 🏁 Final Round: Top 12 Teams
+
+This interface was developed as part of the **final round of an AI hackathon**, where only the **top 12 teams** advanced.
+Each team was challenged to demonstrate innovative AI integration and user-friendly interfaces to solve real-world problems using surveys and summarization.
+
+---
+
