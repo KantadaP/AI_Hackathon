@@ -8,6 +8,10 @@ import AllsurveyPage from "./pages/AllsurveyPage.jsx";
 import DarftPage from "./pages/DarftPage.jsx";
 import InactivePage from "./pages/InactivePage.jsx";
 import UpgradePage from "./pages/UpgradePage.jsx";
+import AddPage from "./pages/AddPage.jsx";
+
+import ChatPage from "./pages/AddPage/ChatPage.jsx";
+import EditPage from "./pages/AddPage/EditPage.jsx";
 import "./index.css";
 
 import Backend1 from "./backend/backend1.jsx";
@@ -31,11 +35,19 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "/dashboard/add",
+    element: <AddPage />,
+    children: [
+      { index: true, element: <ChatPage /> },
+      { path: "edit", element: <EditPage /> },
+    ],
+  },
+  {
     path: "/backend",
     children: [
-      { path: '1', element: <Backend1 /> },
-      { path: '2', element: <Backend2 /> },
-      { path: '3', element: <Backend3 /> },
+      { path: "1", element: <Backend1 /> },
+      { path: "2", element: <Backend2 /> },
+      { path: "3", element: <Backend3 /> },
     ],
   },
 ]);

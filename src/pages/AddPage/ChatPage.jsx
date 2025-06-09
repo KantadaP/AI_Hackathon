@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-function App() {
+function ChatPage() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
@@ -29,12 +29,9 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="w-full max-w-xl bg-white shadow-md rounded-lg p-4">
-        <h1 className="text-2xl font-semibold mb-4 text-center">
-          AI Chat Assistant
-        </h1>
-        <div className="h-96 overflow-y-auto border rounded p-2 mb-4 bg-gray-50">
+    <>
+      <div className="w-full h-full   bg-white shadow-md  p-4">
+        <div className=" h-[500px] overflow-y-auto border rounded p-2 mb-4 bg-gray-50">
           {messages.map((msg, i) => (
             <div
               key={i}
@@ -45,7 +42,7 @@ function App() {
               <div
                 className={`px-4 py-2 rounded-lg max-w-[75%] ${
                   msg.role === "user"
-                    ? "bg-blue-500 text-white"
+                    ? "bg-green-button text-white"
                     : "bg-gray-300 text-gray-800"
                 }`}
               >
@@ -70,15 +67,15 @@ function App() {
             <i class="fa-solid fa-paperclip"></i>
           </button>
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600"
+            className=" bg-green-button text-white px-4 py-2 rounded-r hover:bg-lime-400 transition-colors duration-200"
             onClick={sendMessage}
           >
-            Send
+            <i class="fa-solid fa-paper-plane-top -rotate-45"></i>
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-export default App;
+export default ChatPage;
