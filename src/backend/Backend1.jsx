@@ -1,20 +1,37 @@
-import React from "react";
+//GET THE RESPOND
+import React, { useEffect, useState } from 'react';
 
-function fBackend1(x, y) {
-  // This is a simple functional component that returns a div with the text "Backend1"
-  // It can be used as a route in a React Router setup
-  // You can add more functionality or styling as needed
-  const z = x + y;
-  return z;
-}
+export default function RawResponseList() {
+  const [rawAnswers, setRawAnswers] = useState([]);
+  const [surveyId, setSurveyId] = useState(null);
 
-export default function Backend1() {
+  useEffect(() => {
+    // Step 1: Get the first or latest survey
+    const surveys = JSON.parse(localStorage.getItem('surveys') || '[]');
+    if (!surveys.length) return;
+
+    const firstSurvey = surveys[0];
+    const s_id = firstSurvey.s_id;
+    setSurveyId(s_id);
+
+    // Step 2: Get responses and reformat
+    const storedResponses = JSON.parse(localStorage.getItem(`responses_${s_id}`) || '[]');
+    const simplified = storedResponses.map(res => ({
+      answers: res.answers
+    }));
+
+    setRawAnswers(simplified);
+  }, []);
+
   return (
-    <>
-      <div>Backend1</div>
-      // You can call the function fBackend1 here if needed
-      <div>{fBackend1(2, 3)}</div> // Example of calling the function with
-      arguments
-    </>
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md space-y-4">
+        <h1 className="text-2xl font-bold">Raw Answers for Survey ID: {surveyId}</h1>
+
+        <pre className="bg-gray-100 text-sm p-4 rounded overflow-x-auto">
+          {JSON.stringify(rawAnswers, null, 2)}
+        </pre>
+      </div>
+    </div>
   );
 }
