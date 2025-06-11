@@ -1,10 +1,9 @@
-//CREATE SURVEY FUNCTION
-import React, { useState } from 'react';
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from "react-router-dom";
 
-// ✅ Updated createSurvey to include name
-const createSurvey = (surveyId, name, questions, status) => {
+const saveSurvey = (surveyId, name, questions, status) => {
   const surveys = JSON.parse(localStorage.getItem('surveys') || '[]');
+
   const newSurvey = {
     s_id: surveyId,
     name,
@@ -12,19 +11,49 @@ const createSurvey = (surveyId, name, questions, status) => {
     questions,
     createdAt: new Date().toISOString(),
   };
-  surveys.push(newSurvey);
+
+  const existingIndex = surveys.findIndex(s => s.s_id === surveyId);
+  if (existingIndex !== -1) {
+    surveys[existingIndex] = { ...surveys[existingIndex], ...newSurvey };
+  } else {
+    surveys.push(newSurvey);
+  }
+
   localStorage.setItem('surveys', JSON.stringify(surveys));
   return newSurvey;
 };
 
-// ✅ Updated form component
+const deleteSurveyById = (surveyId) => {
+  const surveys = JSON.parse(localStorage.getItem('surveys') || '[]');
+  const filtered = surveys.filter(s => s.s_id !== surveyId);
+  localStorage.setItem('surveys', JSON.stringify(filtered));
+};
+
 function FCreateSurveyForm() {
   const { surveyId } = useParams();
+  const navigate = useNavigate();
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [name, setName] = useState('');
   const [status, setStatus] = useState('Active');
   const [questions, setQuestions] = useState([
     { question: '', choice: [''], type: 'multiple_choice' },
   ]);
+
+  useEffect(() => {
+    if (!surveyId) return;
+
+    const surveys = JSON.parse(localStorage.getItem('surveys') || '[]');
+    const existingSurvey = surveys.find(s => s.s_id === surveyId);
+
+    if (existingSurvey) {
+      setName(existingSurvey.name);
+      setStatus(existingSurvey.status);
+      setQuestions(existingSurvey.questions.length > 0 ? existingSurvey.questions : [
+        { question: '', choice: [''], type: 'multiple_choice' }
+      ]);
+    }
+  }, [surveyId]);
 
   const handleQuestionChange = (index, field, value) => {
     const newQuestions = [...questions];
@@ -51,6 +80,51 @@ function FCreateSurveyForm() {
     ]);
   };
 
+  // New: Delete a choice
+  const deleteChoice = (qIndex, cIndex) => {
+    const newQuestions = [...questions];
+    newQuestions[qIndex].choice.splice(cIndex, 1);
+    // if no choice left, add an empty one to prevent zero choice
+    if (newQuestions[qIndex].choice.length === 0) {
+      newQuestions[qIndex].choice.push('');
+    }
+    setQuestions(newQuestions);
+  };
+
+  // New: Delete a question
+  const deleteQuestion = (qIndex) => {
+    const newQuestions = [...questions];
+    newQuestions.splice(qIndex, 1);
+    // If no questions left, add a blank default question
+    if (newQuestions.length === 0) {
+      newQuestions.push({ question: '', choice: [''], type: 'multiple_choice' });
+    }
+    setQuestions(newQuestions);
+  };
+
+  // New: Delete entire survey and reset form
+  const deleteSurvey = () => {
+    if (!surveyId) {
+      // If no surveyId (new form), just reset form
+      setName('');
+      setStatus('Active');
+      setQuestions([{ question: '', choice: [''], type: 'multiple_choice' }]);
+      setIsSubmitted(false);
+      return;
+    }
+
+    if (window.confirm('Are you sure you want to delete this entire survey? This action cannot be undone.')) {
+      deleteSurveyById(surveyId);
+      alert('Survey deleted.');
+
+      // Reset the form fields after deletion
+      setName('');
+      setStatus('Active');
+      setQuestions([{ question: '', choice: [''], type: 'multiple_choice' }]);
+      setIsSubmitted(false);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const cleanedQuestions = questions.map((q) => ({
@@ -61,20 +135,19 @@ function FCreateSurveyForm() {
           : q.choice.filter((c) => c.trim() !== ''),
     }));
 
-    const newSurvey = createSurvey(surveyId, name.trim(), cleanedQuestions, status);
-    if (newSurvey) {
-      alert(`Survey created with ID: ${newSurvey.s_id}`);
+    const savedSurvey = saveSurvey(surveyId || Date.now().toString(), name.trim(), cleanedQuestions, status);
+    if (savedSurvey) {
+      setIsSubmitted(true);
     } else {
-      alert('Failed to create survey');
+      alert('Failed to save survey');
     }
   };
 
   return (
     <div className="p-6 w-full bg-white rounded-xl shadow-md space-y-6">
-    <h1 className="text-2xl font-bold">Create New Survey</h1>
+      <h1 className="text-2xl font-bold">{surveyId ? 'Edit Survey' : 'Create New Survey'}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* ✅ New Survey Name Input */}
         <div>
           <label className="block font-semibold mb-1">Survey Name:</label>
           <input
@@ -103,8 +176,17 @@ function FCreateSurveyForm() {
         {questions.map((q, qIndex) => (
           <div
             key={qIndex}
-            className="border rounded p-4 bg-gray-50 space-y-2"
+            className="border rounded p-4 bg-gray-50 space-y-2 relative"
           >
+            <button
+              type="button"
+              onClick={() => deleteQuestion(qIndex)}
+              className="absolute top-2 right-2 text-red-600 hover:text-red-800 font-bold"
+              title="Delete Question"
+            >
+              &times;
+            </button>
+
             <label className="block font-semibold mb-1">
               Question {qIndex + 1}
             </label>
@@ -116,6 +198,7 @@ function FCreateSurveyForm() {
               onChange={(e) =>
                 handleQuestionChange(qIndex, 'question', e.target.value)
               }
+              required
             />
 
             <div>
@@ -135,16 +218,26 @@ function FCreateSurveyForm() {
             {q.type === 'multiple_choice' && (
               <div className="space-y-2">
                 {q.choice.map((c, cIndex) => (
-                  <input
-                    key={cIndex}
-                    type="text"
-                    className="w-full border p-2"
-                    placeholder={`Choice ${cIndex + 1}`}
-                    value={c}
-                    onChange={(e) =>
-                      handleChoiceChange(qIndex, cIndex, e.target.value)
-                    }
-                  />
+                  <div key={cIndex} className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      className="w-full border p-2"
+                      placeholder={`Choice ${cIndex + 1}`}
+                      value={c}
+                      onChange={(e) =>
+                        handleChoiceChange(qIndex, cIndex, e.target.value)
+                      }
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => deleteChoice(qIndex, cIndex)}
+                      className="text-red-600 hover:text-red-800 font-bold px-2"
+                      title="Delete Choice"
+                    >
+                      &times;
+                    </button>
+                  </div>
                 ))}
                 <button
                   type="button"
@@ -180,18 +273,33 @@ function FCreateSurveyForm() {
           + Add Another Question
         </button>
 
-        <button
-          type="submit"
-          className="block mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Create Survey
-        </button>
+        <div className="flex space-x-4 items-center">
+          <button
+            type="submit"
+            className="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            {surveyId ? "Update Survey" : "Create Survey"}
+          </button>
+
+          <button
+            type="button"
+            onClick={deleteSurvey}
+            className="mt-6 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          >
+            Delete Entire Survey
+          </button>
+        </div>
+
+        {isSubmitted && (
+          <div className="p-4 bg-green-100 text-green-800 rounded mt-4">
+            ✅ Survey {surveyId ? 'updated' : 'created'} successfully!
+          </div>
+        )}
       </form>
     </div>
   );
 }
 
-// ✅ Page-level wrapper
 export default function CreateSurveyForm() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">

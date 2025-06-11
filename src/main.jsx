@@ -12,6 +12,7 @@ import AddPage from "./pages/AddPage.jsx";
 
 import ChatPage from "./pages/AddPage/ChatPage.jsx";
 import EditPage from "./pages/AddPage/EditPage.jsx";
+import Preview from "./pages/AddPage/Preview.jsx";
 import "./index.css";
 
 import Backend1 from "./backend/Backend1.jsx";
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <ChatPage agent_id="asst_gd0SlyeZwjGFm4LPZA5fMyqp" /> },
       { path: "edit", element: <EditPage /> },
+      { path: "preview", element: <Preview /> },
     ],
   },
   {
