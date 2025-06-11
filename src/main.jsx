@@ -14,8 +14,8 @@ import ChatPage from "./pages/AddPage/ChatPage.jsx";
 import EditPage from "./pages/AddPage/EditPage.jsx";
 import "./index.css";
 
-import Backend1 from "./backend/backend1.jsx";
-import Backend2 from "./backend/backend2.jsx";
+import Backend1 from "./backend/Backend1.jsx";
+import Backend2 from "./backend/Backend2.jsx";
 import Backend3 from "./backend/Backend3.jsx";
 
 const router = createBrowserRouter([

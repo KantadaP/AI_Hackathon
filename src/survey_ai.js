@@ -3,6 +3,26 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { AIProjectClient } from "@azure/ai-projects";
 import { DefaultAzureCredential } from "@azure/identity";
+export let extractedJsonData = null;
+
+function splitMessage(text) {
+  const regex = /‘’’([\s\S]*?)‘’’/;
+  const match = text.match(regex);
+
+  let json = null;
+  let pureText = text;
+
+  if (match) {
+    try {
+      json = JSON.parse(match[1]);
+      pureText = text.replace(match[0], "").trim(); // remove the entire ''' ... ''' block
+    } catch (err) {
+      console.error("Failed to parse JSON block:", err);
+    }
+  }
+
+  return { json, pureText };
+}
 
 const app = express();
 app.use(cors());
@@ -66,10 +86,20 @@ async function survey_ai(contents, threadid, agent_ai) {
   if (m && m.role === "assistant") {
     const content = m.content.find((c) => c.type === "text" && "text" in c);
     if (content) {
-      return content.text.value;
+      const fullText = content.text.value;
+
+      // Split into JSON + plain text
+      const { json, pureText } = splitMessage(fullText);
+
+      if (json) {
+        extractedJsonData = json; // ✅ store globally for other files to import
+        console.log("Extracted JSON:", extractedJsonData);
+      }
+
+      return pureText; // ✅ return only the clean assistant text (no JSON)
     }
   }
-
+  
   return "No assistant response found.";
 }
 
