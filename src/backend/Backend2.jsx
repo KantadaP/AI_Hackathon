@@ -1,11 +1,11 @@
-//CREATE SURVEY FUNCTION
 import React, { useState } from 'react';
 
-// ✅ Dummy createSurvey function
-const createSurvey = (questions, status) => {
+// ✅ Updated createSurvey to include name
+const createSurvey = (name, questions, status) => {
   const surveys = JSON.parse(localStorage.getItem('surveys') || '[]');
   const newSurvey = {
     s_id: Date.now(),
+    name,
     status,
     questions,
     createdAt: new Date().toISOString(),
@@ -15,9 +15,9 @@ const createSurvey = (questions, status) => {
   return newSurvey;
 };
 
-
-// ✅ Proper React component with correct JSX usage
+// ✅ Updated form component
 function FCreateSurveyForm() {
+  const [name, setName] = useState('');
   const [status, setStatus] = useState('Active');
   const [questions, setQuestions] = useState([
     { question: '', choice: [''], type: 'multiple_choice' },
@@ -58,7 +58,7 @@ function FCreateSurveyForm() {
           : q.choice.filter((c) => c.trim() !== ''),
     }));
 
-    const newSurvey = createSurvey(cleanedQuestions, status);
+    const newSurvey = createSurvey(name.trim(), cleanedQuestions, status);
     if (newSurvey) {
       alert(`Survey created with ID: ${newSurvey.s_id}`);
     } else {
@@ -71,6 +71,19 @@ function FCreateSurveyForm() {
       <h1 className="text-2xl font-bold">Create New Survey</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* ✅ New Survey Name Input */}
+        <div>
+          <label className="block font-semibold mb-1">Survey Name:</label>
+          <input
+            type="text"
+            className="w-full border rounded p-2"
+            placeholder="Enter survey name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+
         <div>
           <label className="block font-semibold mb-1">Survey Status:</label>
           <select
@@ -140,19 +153,19 @@ function FCreateSurveyForm() {
               </div>
             )}
 
-              {q.type === 'fill_answer' && (
-  <div className="mt-2">
-    <label className="block font-medium text-sm mb-1">Answer Field Preview:</label>
-    <input
-      type="text"
-      disabled
-      className="w-full border p-2 bg-gray-200 text-gray-600"
-      placeholder="User will type their answer here"
-    />
-  </div>
-)}
-
-            
+            {q.type === 'fill_answer' && (
+              <div className="mt-2">
+                <label className="block font-medium text-sm mb-1">
+                  Answer Field Preview:
+                </label>
+                <input
+                  type="text"
+                  disabled
+                  className="w-full border p-2 bg-gray-200 text-gray-600"
+                  placeholder="User will type their answer here"
+                />
+              </div>
+            )}
           </div>
         ))}
 
@@ -175,7 +188,7 @@ function FCreateSurveyForm() {
   );
 }
 
-// ✅ Exported page-level component
+// ✅ Page-level wrapper
 export default function CreateSurveyForm() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
