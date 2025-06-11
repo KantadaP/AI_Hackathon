@@ -1,12 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
-function ChatPage() {
+function ChatPage({ agent_id } ) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [threadId, setThreadId] = useState(null);
+
+    // ✅ Get new thread when component mounts
+  useEffect(() => {
+    const startNewThread = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/thread");
+        setThreadId(res.data.threadId);
+        console.log(threadId)
+      } catch (err) {
+        console.error("Failed to create thread", err);
+      }
+    };
+
+    startNewThread();
+  }, []); // runs once on component mount
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !threadId) return;
 
     const userMsg = { role: "user", content: input };
     setMessages((prev) => [...prev, userMsg]);
@@ -15,6 +31,8 @@ function ChatPage() {
     try {
       const res = await axios.post("http://localhost:8000/chat", {
         message: input,
+        threadId,
+        agent_ai: agent_id,
       });
 
       const botMsg = { role: "assistant", content: res.data.content };

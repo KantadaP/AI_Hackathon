@@ -38,7 +38,7 @@ const router = createBrowserRouter([
     path: "/dashboard/add",
     element: <AddPage />,
     children: [
-      { index: true, element: <ChatPage /> },
+      { index: true, element: <ChatPage agent_id="asst_gd0SlyeZwjGFm4LPZA5fMyqp" /> },
       { path: "edit", element: <EditPage /> },
     ],
   },
