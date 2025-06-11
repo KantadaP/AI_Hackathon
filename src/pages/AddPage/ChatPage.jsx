@@ -12,7 +12,7 @@ function ChatPage({ agent_id } ) {
       try {
         const res = await axios.get("http://localhost:8000/thread");
         setThreadId(res.data.threadId);
-        console.log(threadId)
+        console.log(res.data.threadId)
       } catch (err) {
         console.error("Failed to create thread", err);
       }
@@ -22,7 +22,12 @@ function ChatPage({ agent_id } ) {
   }, []); // runs once on component mount
 
   const sendMessage = async () => {
-    if (!input.trim() || !threadId) return;
+    if (!input.trim()) return;
+
+    if (!threadId) {
+      console.warn("Thread ID is not ready yet!");
+      return;
+    }
 
     const userMsg = { role: "user", content: input };
     setMessages((prev) => [...prev, userMsg]);

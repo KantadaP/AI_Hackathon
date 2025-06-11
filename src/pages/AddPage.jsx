@@ -1,19 +1,20 @@
 import profile from "../assets/profile.svg";
 import logo from "../assets/logo.svg";
-import { Outlet } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useParams, useNavigate } from "react-router-dom";
 
 export default function AddPage() {
-    const Nav = [
-      { name: "Chat", path: "/dashboard/add/" },
-      { name: "Edit", path: "/dashboard/add/edit" },
-      { name: "Preview", path: "/dashboard/add/preview" },
-    ];
+  const { surveyId } = useParams();
 
-    const navigate = useNavigate();
-    const handleNavigation = (path) => {
-        navigate(path);
-    };
+  const Nav = [
+    { name: "Chat", path: `/dashboard/add/${surveyId}` },
+    { name: "Edit", path: `/dashboard/add/${surveyId}/edit` },
+    { name: "Preview", path: `/dashboard/add/${surveyId}/preview` },
+  ];
+
+  const navigate = useNavigate();
+  const handleNavigation = (path) => {
+      navigate(path);
+  };
   return (
     <div className=" h-full p-5 px-10">
       <div className="w-full flex justify-between items-center mb-5">
