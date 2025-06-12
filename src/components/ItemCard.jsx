@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router";
 
 export default function ItemCard({
   title = "Fried Chicken",
@@ -8,9 +9,17 @@ export default function ItemCard({
   runningDate = "8 JUN 2025",
   responses = 120,
 }) {
+  const navigate = useNavigate();
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <>
-      <div className="w-full flex justify-between items-center h-[133px] bg-white rounded-full shadow-md py-4 px-4 mb-4 relative">
+      <div
+        className="w-full flex justify-between items-center h-[133px] bg-white rounded-full shadow-md py-4 px-4 mb-4 relative cursor-pointer"
+        onClick={() => handleNavigation("/dashboard")}
+      >
         <div className=" absolute left-10 flex items-center gap-[25px]">
           <i class={` ${icon} text-[40px]`}></i>
           <div>
