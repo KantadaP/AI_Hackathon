@@ -12,6 +12,8 @@ import AddPage from "./pages/AddPage.jsx";
 
 import ChatPage from "./pages/AddPage/ChatPage.jsx";
 import EditPage from "./pages/AddPage/EditPage.jsx";
+import PreviewPage from "./pages/AddPage/PreviewPage.jsx";
+import RespondPage from "./pages/RespondPage.jsx";
 import "./index.css";
 
 import Backend1 from "./backend/backend1.jsx";
@@ -40,6 +42,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <ChatPage /> },
       { path: "edit", element: <EditPage /> },
+      { path: "preview", element: <PreviewPage /> },
     ],
   },
   {
@@ -50,6 +53,10 @@ const router = createBrowserRouter([
       { path: "3", element: <Backend3 /> },
     ],
   },
+  {
+    path: "/respond",
+    element: <RespondPage />
+  }
 ]);
 
 createRoot(document.getElementById("root")).render(

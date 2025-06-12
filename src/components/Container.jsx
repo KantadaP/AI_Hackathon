@@ -12,8 +12,8 @@ export default function Container({ children, title = "Active", color = "bg-gree
           >
             <i
               className={` ${
-                activeSurveys && "rotate-0"
-              } rotate-180 fa-solid fa-angle-down`}
+                activeSurveys ? " rotate-0 " : "rotate-180"
+              }  fa-solid fa-angle-down`}
             ></i>
           </button>
           <div className={`w-5 h-5 rounded-full  ${color}`}></div>
