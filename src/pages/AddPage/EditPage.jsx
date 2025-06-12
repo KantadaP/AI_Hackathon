@@ -1,12 +1,12 @@
-//CREATE SURVEY FUNCTION
 import React, { useState, useContext } from "react";
 import { QuestionsContext } from "../../contexts/QuestionsContext";
 
-// ✅ Dummy createSurvey function
-const createSurvey = (questions, status) => {
+// ✅ Updated createSurvey function to accept surveyName
+const createSurvey = (name, questions, status) => {
   const surveys = JSON.parse(localStorage.getItem("surveys") || "[]");
   const newSurvey = {
     s_id: Date.now(),
+    name,
     status,
     questions,
     createdAt: new Date().toISOString(),
@@ -16,8 +16,9 @@ const createSurvey = (questions, status) => {
   return newSurvey;
 };
 
-// ✅ Proper React component with correct JSX usage
+// ✅ Main component
 function FCreateSurveyForm() {
+  const [surveyName, setSurveyName] = useState("");
   const [status, setStatus] = useState("Active");
 
   const handleRefresh = () => {
@@ -25,6 +26,7 @@ function FCreateSurveyForm() {
   };
 
   const { questions, setQuestions } = useContext(QuestionsContext);
+
   const handleQuestionChange = (index, field, value) => {
     const newQuestions = [...questions];
     newQuestions[index][field] = value;
@@ -58,19 +60,33 @@ function FCreateSurveyForm() {
         q.type === "fill_answer" ? "" : q.choice.filter((c) => c.trim() !== ""),
     }));
 
-    const newSurvey = createSurvey(cleanedQuestions, status);
+    const newSurvey = createSurvey(surveyName, cleanedQuestions, status);
     if (newSurvey) {
-      alert(`Survey created with ID: ${newSurvey.s_id}`);
+      alert(`Survey "${newSurvey.name}" created with ID: ${newSurvey.s_id}`);
     } else {
       alert("Failed to create survey");
     }
   };
 
   return (
-    <div className="p-6 w-full h-full overflow-y-scroll  bg-white space-y-6">
+    <div className="p-6 w-full h-full overflow-y-scroll bg-white space-y-6">
       <h1 className="text-2xl font-bold">Edit Survey</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* ✅ Survey Name Input */}
+        <div>
+          <label className="block font-semibold mb-1">Survey Name:</label>
+          <input
+            type="text"
+            className="border rounded p-2 w-full"
+            placeholder="Enter survey name"
+            value={surveyName}
+            onChange={(e) => setSurveyName(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* Survey Status */}
         <div>
           <label className="block font-semibold mb-1">Survey Status:</label>
           <select
@@ -84,6 +100,7 @@ function FCreateSurveyForm() {
           </select>
         </div>
 
+        {/* Questions */}
         {questions.map((q, qIndex) => (
           <div key={qIndex} className="border rounded p-4 bg-gray-50 space-y-2">
             <label className="block font-semibold mb-1">
