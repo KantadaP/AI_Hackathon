@@ -4,7 +4,8 @@ import { useNavigate } from "react-router";
 export default function Header({ title = "header" }) {
   const navigate = useNavigate();
   const handleNewSurvey = () => {
-    navigate("/dashboard/add");
+    const newId = Date.now().toString();
+    navigate(`/dashboard/add/${newId}`);
   };
   return (
     <>

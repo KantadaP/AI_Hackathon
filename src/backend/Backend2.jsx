@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from "react-router-dom";
 
 // ✅ Updated createSurvey to include name
-const createSurvey = (name, questions, status) => {
+const createSurvey = (surveyId, name, questions, status) => {
   const surveys = JSON.parse(localStorage.getItem('surveys') || '[]');
   const newSurvey = {
-    s_id: Date.now(),
+    s_id: surveyId,
     name,
     status,
     questions,
@@ -22,6 +23,7 @@ function FCreateSurveyForm() {
   const [questions, setQuestions] = useState([
     { question: '', choice: [''], type: 'multiple_choice' },
   ]);
+  const { surveyId } = useParams();
 
   const handleQuestionChange = (index, field, value) => {
     const newQuestions = [...questions];
@@ -58,7 +60,7 @@ function FCreateSurveyForm() {
           : q.choice.filter((c) => c.trim() !== ''),
     }));
 
-    const newSurvey = createSurvey(name.trim(), cleanedQuestions, status);
+    const newSurvey = createSurvey(surveyId, name.trim(), cleanedQuestions, status);
     if (newSurvey) {
       alert(`Survey created with ID: ${newSurvey.s_id}`);
     } else {

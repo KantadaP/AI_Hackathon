@@ -37,10 +37,10 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/dashboard/add",
+    path: "/dashboard/add/:surveyId",
     element: <AddPage />,
     children: [
-      { index: true, element: <ChatPage /> },
+      { index: true, element: <ChatPage agent_id="asst_gd0SlyeZwjGFm4LPZA5fMyqp" /> },
       { path: "edit", element: <EditPage /> },
       { path: "preview", element: <PreviewPage /> },
     ],

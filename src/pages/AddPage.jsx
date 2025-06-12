@@ -1,12 +1,13 @@
 import profile from "../assets/profile.svg";
 import logo from "../assets/logo.svg";
-import { Outlet } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { QuestionsProvider } from "../contexts/QuestionsContext";
 import CopyLinkButton from '../components/CopyLinkButton';
 
 export default function AddPage() {
+
+  const { surveyId } = useParams();
 
   const [ surveys, setSurveys ] = useState('')
 
@@ -23,14 +24,14 @@ export default function AddPage() {
   };
 
   const Nav = [
-    { name: "Chat", path: "/dashboard/add/" },
-    { name: "Edit", path: "/dashboard/add/edit" },
-    { name: "Preview", path: "/dashboard/add/preview" },
+    { name: "Chat", path: `/dashboard/add/${surveyId}` },
+    { name: "Edit", path: `/dashboard/add/${surveyId}/edit` },
+    { name: "Preview", path: `/dashboard/add/${surveyId}/preview` },
   ];
 
   const navigate = useNavigate();
   const handleNavigation = (path) => {
-    navigate(path);
+      navigate(path);
   };
   return (
     <div className=" h-full p-5 px-10">
