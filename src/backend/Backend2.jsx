@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from 'react';
+import { QuestionsContext } from "../contexts/QuestionsContext"; // adjust path
 
 // ✅ Updated createSurvey to include name
 const createSurvey = (surveyId, name, questions, status) => {
@@ -20,9 +21,13 @@ const createSurvey = (surveyId, name, questions, status) => {
 function FCreateSurveyForm() {
   const [name, setName] = useState('');
   const [status, setStatus] = useState('Active');
-  const [questions, setQuestions] = useState([
-    { question: '', choice: [''], type: 'multiple_choice' },
-  ]);
+  const { questions, setQuestions } = useContext(QuestionsContext);
+  useEffect(() => {
+    if (questions.length === 0) {
+      setQuestions([{ question: '', choice: [''], type: 'multiple_choice' }]);
+    }
+  }, []);
+
   const { surveyId } = useParams();
 
   const handleQuestionChange = (index, field, value) => {

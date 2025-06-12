@@ -1,31 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router";
-
-const createSurvey = (surveyId, name, questionsString, status) => {
-  const surveys = JSON.parse(localStorage.getItem("surveys") || "[]");
-
-  let questions;
-  try {
-    questions = JSON.parse(questionsString);
-  } catch (e) {
-    console.error("❌ Failed to parse questions JSON:", e);
-    questions = [];
-  }
-
-  const newSurvey = {
-    s_id: parseInt(surveyId, 10), // 🔵 Ensure s_id is an integer
-    name,
-    status,
-    questions,
-    createdAt: new Date().toISOString(),
-  };
-
-  surveys.push(newSurvey);
-  localStorage.setItem("surveys", JSON.stringify(surveys));
-
-  console.log("✅ Survey saved:", newSurvey);
-};
+import { useContext } from "react";
+import { QuestionsContext } from "../../contexts/QuestionsContext"; // adjust path if needed
 
 function ChatPage({ agent_id }) {
   const [messages, setMessages] = useState([]);
@@ -33,6 +10,7 @@ function ChatPage({ agent_id }) {
   const [threadId, setThreadId] = useState(null);
 
   const { surveyId } = useParams();
+  const { setQuestions } = useContext(QuestionsContext);
 
   useEffect(() => {
     const startNewThread = async () => {
@@ -78,7 +56,14 @@ function ChatPage({ agent_id }) {
       if (match) {
         code = match[1].trim();
         text = contents.replace(match[0], "").replace(/\n{2,}/g, "\n").trim();
-        createSurvey(surveyId, "Untitled", code, "Inactive");
+        let parsedQuestions;
+        try {
+          parsedQuestions = JSON.parse(code);
+          setQuestions(parsedQuestions); // ✅ Update context instead of localStorage
+        } catch (e) {
+          console.error("Failed to parse survey code as JSON", e);
+        }
+
       }
 
       const botMsg = { role: "assistant", content: text };

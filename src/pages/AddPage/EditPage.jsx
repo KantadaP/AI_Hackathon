@@ -57,7 +57,7 @@ function FCreateSurveyForm() {
     const cleanedQuestions = questions.map((q) => ({
       ...q,
       choice:
-        q.type === "fill_answer" ? "" : q.choice.filter((c) => c.trim() !== ""),
+        q.type === "fill_answer" ? "" : (q.choice || []).filter((c) => c.trim() !== ""),
     }));
 
     const newSurvey = createSurvey(surveyName, cleanedQuestions, status);
@@ -181,7 +181,6 @@ function FCreateSurveyForm() {
         <button
           type="submit"
           className="block mt-6 bg-lime-500 text-white px-4 py-2 rounded hover:bg-lime-600"
-          onClick={handleRefresh}
         >
           Create Survey
         </button>
