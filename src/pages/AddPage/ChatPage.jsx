@@ -1,25 +1,52 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams } from "react-router";
 
-function ChatPage({ agent_id } ) {
+const createSurvey = (surveyId, name, questionsString, status) => {
+  const surveys = JSON.parse(localStorage.getItem("surveys") || "[]");
+
+  let questions;
+  try {
+    questions = JSON.parse(questionsString);
+  } catch (e) {
+    console.error("❌ Failed to parse questions JSON:", e);
+    questions = [];
+  }
+
+  const newSurvey = {
+    s_id: parseInt(surveyId, 10), // 🔵 Ensure s_id is an integer
+    name,
+    status,
+    questions,
+    createdAt: new Date().toISOString(),
+  };
+
+  surveys.push(newSurvey);
+  localStorage.setItem("surveys", JSON.stringify(surveys));
+
+  console.log("✅ Survey saved:", newSurvey);
+};
+
+function ChatPage({ agent_id }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [threadId, setThreadId] = useState(null);
 
-    // ✅ Get new thread when component mounts
+  const { surveyId } = useParams();
+
   useEffect(() => {
     const startNewThread = async () => {
       try {
         const res = await axios.get("http://localhost:8000/thread");
         setThreadId(res.data.threadId);
-        console.log(res.data.threadId)
+        console.log("Thread created:", res.data.threadId);
       } catch (err) {
         console.error("Failed to create thread", err);
       }
     };
 
     startNewThread();
-  }, []); // runs once on component mount
+  }, []);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -40,7 +67,21 @@ function ChatPage({ agent_id } ) {
         agent_ai: agent_id,
       });
 
-      const botMsg = { role: "assistant", content: res.data.content };
+      const contents = res.data.content;
+
+      // Extract code block wrapped in triple single quotes
+      const match = contents.match(/'''([\s\S]*?)'''/);
+
+      let code = "";
+      let text = contents.trim();
+
+      if (match) {
+        code = match[1].trim();
+        text = contents.replace(match[0], "").replace(/\n{2,}/g, "\n").trim();
+        createSurvey(surveyId, "Untitled", code, "Inactive");
+      }
+
+      const botMsg = { role: "assistant", content: text };
       setMessages((prev) => [...prev, botMsg]);
     } catch (err) {
       const errorMsg = {
@@ -52,52 +93,50 @@ function ChatPage({ agent_id } ) {
   };
 
   return (
-    <>
-      <div className="w-full h-full   bg-white shadow-md  p-4">
-        <div className=" h-[500px] overflow-y-auto border rounded p-2 mb-4 bg-gray-50">
-          {messages.map((msg, i) => (
+    <div className="w-full h-full bg-white shadow-md p-4">
+      <div className="h-[500px] overflow-y-auto border rounded p-2 mb-4 bg-gray-50">
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className={`my-2 flex ${
+              msg.role === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
             <div
-              key={i}
-              className={`my-2 flex ${
-                msg.role === "user" ? "justify-end" : "justify-start"
+              className={`px-4 py-2 rounded-lg max-w-[75%] ${
+                msg.role === "user"
+                  ? "bg-green-button text-white"
+                  : "bg-gray-300 text-gray-800"
               }`}
             >
-              <div
-                className={`px-4 py-2 rounded-lg max-w-[75%] ${
-                  msg.role === "user"
-                    ? "bg-green-button text-white"
-                    : "bg-gray-300 text-gray-800"
-                }`}
-              >
-                {msg.content}
-              </div>
+              {msg.content}
             </div>
-          ))}
-        </div>
-
-        <div className="flex">
-          <input
-            className="flex-grow border rounded-l px-4 py-2 focus:outline-none"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            placeholder="Type your message..."
-          />
-          <button
-            className=" bg-green-button text-white px-4 py-2  hover:bg-lime-400 transition-colors duration-200"
-            onClick={sendMessage}
-          >
-            <i class="fa-solid fa-paperclip"></i>
-          </button>
-          <button
-            className=" bg-green-button text-white px-4 py-2 rounded-r hover:bg-lime-400 transition-colors duration-200"
-            onClick={sendMessage}
-          >
-            <i class="fa-solid fa-paper-plane-top -rotate-45"></i>
-          </button>
-        </div>
+          </div>
+        ))}
       </div>
-    </>
+
+      <div className="flex">
+        <input
+          className="flex-grow border rounded-l px-4 py-2 focus:outline-none"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          placeholder="Type your message..."
+        />
+        <button
+          className="bg-green-button text-white px-4 py-2 hover:bg-lime-400 transition-colors duration-200"
+          onClick={sendMessage}
+        >
+          <i className="fa-solid fa-paperclip"></i>
+        </button>
+        <button
+          className="bg-green-button text-white px-4 py-2 rounded-r hover:bg-lime-400 transition-colors duration-200"
+          onClick={sendMessage}
+        >
+          <i className="fa-solid fa-paper-plane-top -rotate-45"></i>
+        </button>
+      </div>
+    </div>
   );
 }
 

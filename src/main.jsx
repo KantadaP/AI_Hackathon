@@ -16,8 +16,8 @@ import PreviewPage from "./pages/AddPage/PreviewPage.jsx";
 import RespondPage from "./pages/RespondPage.jsx";
 import "./index.css";
 
-import Backend1 from "./backend/backend1.jsx";
-import Backend2 from "./backend/backend2.jsx";
+import Backend1 from "./backend/Backend1.jsx";
+import Backend2 from "./backend/Backend2.jsx";
 import Backend3 from "./backend/Backend3.jsx";
 
 const router = createBrowserRouter([

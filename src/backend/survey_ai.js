@@ -5,25 +5,6 @@ import { AIProjectClient } from "@azure/ai-projects";
 import { DefaultAzureCredential } from "@azure/identity";
 export let extractedJsonData = null;
 
-function splitMessage(text) {
-  const regex = /‘’’([\s\S]*?)‘’’/;
-  const match = text.match(regex);
-
-  let json = null;
-  let pureText = text;
-
-  if (match) {
-    try {
-      json = JSON.parse(match[1]);
-      pureText = text.replace(match[0], "").trim(); // remove the entire ''' ... ''' block
-    } catch (err) {
-      console.error("Failed to parse JSON block:", err);
-    }
-  }
-
-  return { json, pureText };
-}
-
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -88,15 +69,7 @@ async function survey_ai(contents, threadid, agent_ai) {
     if (content) {
       const fullText = content.text.value;
 
-      // Split into JSON + plain text
-      const { json, pureText } = splitMessage(fullText);
-
-      if (json) {
-        extractedJsonData = json; // ✅ store globally for other files to import
-        console.log("Extracted JSON:", extractedJsonData);
-      }
-
-      return pureText; // ✅ return only the clean assistant text (no JSON)
+      return fullText; // ✅ return only the clean assistant text (no JSON)
     }
   }
   
