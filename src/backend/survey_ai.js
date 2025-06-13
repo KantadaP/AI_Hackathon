@@ -3,7 +3,6 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { AIProjectClient } from "@azure/ai-projects";
 import { DefaultAzureCredential } from "@azure/identity";
-export let extractedJsonData = null;
 
 const app = express();
 app.use(cors());
@@ -69,7 +68,7 @@ async function survey_ai(contents, threadid, agent_ai) {
     if (content) {
       const fullText = content.text.value;
 
-      return fullText; // ✅ return only the clean assistant text (no JSON)
+      return fullText; 
     }
   }
   

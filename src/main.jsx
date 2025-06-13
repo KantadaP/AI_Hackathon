@@ -23,7 +23,7 @@ import Backend3 from "./backend/Backend3.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <App agent_id="asst_PNbAvoIntsdYhNwihVhn8NK6"/>,
   },
   {
     path: "/dashboard",
