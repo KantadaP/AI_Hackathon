@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "backend-node": "node src/backend/survey_ai.js",
+    "start-all": "concurrently \"yarn backend-node\" \"yarn dev\""
   },
   "dependencies": {
     "@azure/ai-projects": "^1.0.0-beta.8",
@@ -17,6 +19,7 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "lucide-react": "^0.513.0",
+    "openai": "^5.3.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router": "^7.6.2",
@@ -28,6 +31,7 @@
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.2",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
