@@ -21,8 +21,19 @@ export default function InactivePage() {
     }
   }, []);
 
-  const handleNavigation = (id) => {
-    navigate(`/dashboard/summary/${id}`);
+  // Delete survey handler
+  const handleDelete = (id) => {
+    const confirmed = window.confirm("Are you sure you want to delete this survey?");
+    if (!confirmed) return;
+
+    // Remove survey from localStorage
+    const updatedSurveys = inactiveSurveys.filter((survey) => survey.s_id !== id);
+    setInactiveSurveys(updatedSurveys);
+
+    // Also update in localStorage
+    const allSurveys = JSON.parse(localStorage.getItem("surveys") || "[]");
+    const filteredAll = allSurveys.filter((survey) => survey.s_id !== id);
+    localStorage.setItem("surveys", JSON.stringify(filteredAll));
   };
 
   return (
@@ -33,12 +44,14 @@ export default function InactivePage() {
           inactiveSurveys.map((survey) => (
             <ItemCard
               key={survey.s_id}
+              s_id={survey.s_id} // important for edit/delete
               title={survey.name}
               author="Kantada"
               createdDate={new Date(survey.createdAt).toDateString()}
               runningDate={new Date(survey.createdAt).toDateString()}
               responses={survey.questions?.length || 0}
-              onClick={() => handleNavigation(survey.s_id)}
+              path={`/summary/${survey.s_id}`} // navigate on whole card click
+              onDelete={handleDelete} // pass delete callback
             />
           ))
         ) : (
