@@ -18,7 +18,7 @@ function ChatPage({ agent_id }) {
       try {
         const res = await axios.get("http://localhost:8000/thread");
         setThreadId(res.data.threadId);
-        console.log("Thread created:", res.data.threadId);
+        console.log("Thread creating survey created:", res.data.threadId);
       } catch (err) {
         console.error("Failed to create thread", err);
       }

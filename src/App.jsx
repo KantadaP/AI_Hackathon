@@ -82,8 +82,8 @@ function App({ agent_id }) {
         <TopBar />
       </div>
 
-      {/* 🔹 Expanded Chat Card */}
-      <div className="max-w-7xl w-full mx-auto bg-white rounded-lg shadow-lg mt-6 p-6">
+      {/* 🔹 Expanded Chat Card Full Width */}
+      <div className="w-[95%] mx-auto bg-white rounded-lg shadow-lg mt-4 p-6">
         {/* Simple Header */}
         <div className="bg-green-button text-white p-4 rounded text-2xl font-semibold mb-4">
           AI Agent
@@ -129,12 +129,6 @@ function App({ agent_id }) {
             placeholder="Type your message..."
           />
           <button
-            className="bg-green-button text-white px-4 py-2 hover:bg-lime-400 transition-colors duration-200"
-            onClick={sendMessage}
-          >
-            <i className="fa-solid fa-paperclip"></i>
-          </button>
-          <button
             className="bg-green-button text-white px-4 py-2 rounded-r hover:bg-lime-400 transition-colors duration-200"
             onClick={sendMessage}
           >
@@ -144,7 +138,6 @@ function App({ agent_id }) {
       </div>
     </div>
   );
-
 }
 
 export default App;
