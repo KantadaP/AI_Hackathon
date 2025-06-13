@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import TopBar from "./components/TopBar"; // ✅ Make sure this path is correct
 
 function App({ agent_id }) {
   const [messages, setMessages] = useState([]);
@@ -43,9 +44,11 @@ function App({ agent_id }) {
           }
         });
 
-      surveys = surveys.map(survey => ({
+      surveys = surveys.map((survey) => ({
         ...survey,
-        responses: responses.filter(res => String(res.s_id) === String(survey.s_id))
+        responses: responses.filter(
+          (res) => String(res.s_id) === String(survey.s_id)
+        ),
       }));
     } catch (err) {
       console.error("Error processing localStorage data", err);
@@ -73,50 +76,65 @@ function App({ agent_id }) {
   };
 
   return (
-    <div className="w-full h-full bg-white shadow-md p-4">
-      <div className="h-[500px] overflow-y-auto border rounded p-2 mb-4 bg-gray-50">
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`my-2 flex ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`px-4 py-2 rounded-lg max-w-[75%] ${
-                msg.role === "user"
-                  ? "bg-green-button text-white"
-                  : "bg-gray-300 text-gray-800"
-              }`}
-            >
-              {msg.content}
-            </div>
-          </div>
-        ))}
-
-        {isThinking && (
-          <div className="my-2 flex justify-start">
-            <div className="px-4 py-2 rounded-lg max-w-[75%] bg-gray-300 text-gray-800 animate-pulse">
-              <span className="inline-block animate-pulse">...</span>
-            </div>
-          </div>
-        )}
+    <div className="min-h-screen bg-gray-100">
+      {/* 🔹 Full-width TopBar */}
+      <div className="bg-white shadow p-4">
+        <TopBar />
       </div>
 
-      <div className="flex">
-        <input
-          className="flex-grow border rounded-l px-4 py-2 focus:outline-none"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          placeholder="Type your message..."
-        />
-        <button
-          className="bg-green-button text-white px-4 py-2 hover:bg-lime-400 transition-colors duration-200"
-          onClick={sendMessage}
-        >
-          <i className="fa-solid fa-paper-plane-top -rotate-45"></i>
-        </button>
+      {/* 🔹 Centered Chat Card */}
+      <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-lg mt-6 p-6">
+        {/* Simple Header */}
+        <div className="bg-green-400 text-white p-4 rounded text-2xl font-semibold mb-4">
+          AI Agent
+        </div>
+
+        {/* Chat Window */}
+        <div className="h-[500px] overflow-y-auto border border-gray-200 p-4 bg-gray-50 rounded mb-4">
+          {messages.map((msg, i) => (
+            <div
+              key={i}
+              className={`my-2 flex ${
+                msg.role === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
+              <div
+                className={`px-4 py-2 rounded-lg max-w-[75%] ${
+                  msg.role === "user"
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-300 text-gray-800"
+                }`}
+              >
+                {msg.content}
+              </div>
+            </div>
+          ))}
+
+          {isThinking && (
+            <div className="my-2 flex justify-start">
+              <div className="px-4 py-2 rounded-lg max-w-[75%] bg-gray-300 text-gray-800 animate-pulse">
+                <span className="inline-block animate-pulse">...</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Input Bar */}
+        <div className="flex items-center border-t border-gray-200 pt-3">
+          <input
+            className="flex-grow border rounded-l-md px-4 py-2 focus:outline-none"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            placeholder="Type your message..."
+          />
+          <button
+            className="bg-green-400 text-white px-4 py-2 rounded-r-md hover:bg-green-500 transition-colors duration-200"
+            onClick={sendMessage}
+          >
+            <i className="fa-solid fa-paper-plane-top -rotate-45"></i>
+          </button>
+        </div>
       </div>
     </div>
   );
