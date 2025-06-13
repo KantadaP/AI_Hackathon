@@ -8,8 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "backend-node": "node src/backend/survey_ai.js",
-    "start-all": "concurrently \"yarn backend-node\" \"yarn dev\""
+    "start-all": "concurrently \"node src/backend/survey_ai.js\" \"yarn dev\""
   },
   "dependencies": {
     "@azure/ai-projects": "^1.0.0-beta.8",

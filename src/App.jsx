@@ -82,15 +82,15 @@ function App({ agent_id }) {
         <TopBar />
       </div>
 
-      {/* 🔹 Centered Chat Card */}
-      <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-lg mt-6 p-6">
+      {/* 🔹 Expanded Chat Card */}
+      <div className="max-w-7xl w-full mx-auto bg-white rounded-lg shadow-lg mt-6 p-6">
         {/* Simple Header */}
-        <div className="bg-green-400 text-white p-4 rounded text-2xl font-semibold mb-4">
+        <div className="bg-green-button text-white p-4 rounded text-2xl font-semibold mb-4">
           AI Agent
         </div>
 
         {/* Chat Window */}
-        <div className="h-[500px] overflow-y-auto border border-gray-200 p-4 bg-gray-50 rounded mb-4">
+        <div className="h-[500px] overflow-y-auto border border-gray-200 p-2 bg-gray-50 rounded mb-4">
           {messages.map((msg, i) => (
             <div
               key={i}
@@ -101,7 +101,7 @@ function App({ agent_id }) {
               <div
                 className={`px-4 py-2 rounded-lg max-w-[75%] ${
                   msg.role === "user"
-                    ? "bg-green-500 text-white"
+                    ? "bg-green-button text-white"
                     : "bg-gray-300 text-gray-800"
                 }`}
               >
@@ -119,17 +119,23 @@ function App({ agent_id }) {
           )}
         </div>
 
-        {/* Input Bar */}
-        <div className="flex items-center border-t border-gray-200 pt-3">
+        {/* Input Bar with two buttons */}
+        <div className="flex">
           <input
-            className="flex-grow border rounded-l-md px-4 py-2 focus:outline-none"
+            className="flex-grow border rounded-l px-4 py-2 focus:outline-none"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder="Type your message..."
           />
           <button
-            className="bg-green-400 text-white px-4 py-2 rounded-r-md hover:bg-green-500 transition-colors duration-200"
+            className="bg-green-button text-white px-4 py-2 hover:bg-lime-400 transition-colors duration-200"
+            onClick={sendMessage}
+          >
+            <i className="fa-solid fa-paperclip"></i>
+          </button>
+          <button
+            className="bg-green-button text-white px-4 py-2 rounded-r hover:bg-lime-400 transition-colors duration-200"
             onClick={sendMessage}
           >
             <i className="fa-solid fa-paper-plane-top -rotate-45"></i>
@@ -138,6 +144,7 @@ function App({ agent_id }) {
       </div>
     </div>
   );
+
 }
 
 export default App;

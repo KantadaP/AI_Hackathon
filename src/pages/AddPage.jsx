@@ -73,7 +73,7 @@ export default function AddPage() {
             {" "}
             Preview{" "}
           </p>
-          {surveys && (
+          {/* {surveys && (
             <div className="flex gap-4 items-center">
               <CopyLinkButton
                 className="block text-white px-4 py-2 rounded"
@@ -87,7 +87,7 @@ export default function AddPage() {
                 Open Survey{" "}
               </button>
             </div>
-          )}
+          )} */}
         </div>
         <div className=" h-[600px]  shadow-xl bg-gray-default">
           <QuestionsProvider>
