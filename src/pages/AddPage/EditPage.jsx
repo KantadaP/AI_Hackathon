@@ -1,7 +1,8 @@
 import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ import useNavigate
 import { QuestionsContext } from "../../contexts/QuestionsContext";
 
-// ✅ Updated createSurvey function to accept surveyName
+// ✅ Updated createSurvey function
 const createSurvey = (name, questions, status) => {
   const surveys = JSON.parse(localStorage.getItem("surveys") || "[]");
   const newSurvey = {
@@ -16,15 +17,11 @@ const createSurvey = (name, questions, status) => {
   return newSurvey;
 };
 
-// ✅ Main component
+// ✅ Main form component
 function FCreateSurveyForm() {
   const [surveyName, setSurveyName] = useState("");
   const [status, setStatus] = useState("Active");
-
-  const handleRefresh = () => {
-    window.location.reload();
-  };
-
+  const navigate = useNavigate(); // ✅ initialize navigate
   const { questions, setQuestions } = useContext(QuestionsContext);
 
   const handleQuestionChange = (index, field, value) => {
@@ -63,6 +60,7 @@ function FCreateSurveyForm() {
     const newSurvey = createSurvey(surveyName, cleanedQuestions, status);
     if (newSurvey) {
       alert(`Survey "${newSurvey.name}" created with ID: ${newSurvey.s_id}`);
+      navigate(`/respond/${newSurvey.s_id}`); // ✅ redirect after creation
     } else {
       alert("Failed to create survey");
     }
@@ -73,7 +71,7 @@ function FCreateSurveyForm() {
       <h1 className="text-2xl font-bold">Edit Survey</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* ✅ Survey Name Input */}
+        {/* Survey Name */}
         <div>
           <label className="block font-semibold mb-1">Survey Name:</label>
           <input
@@ -189,8 +187,8 @@ function FCreateSurveyForm() {
   );
 }
 
-// ✅ Exported page-level component
-export default function EditPage({ questions, setQuestions }) {
+// ✅ Page-level component
+export default function EditPage() {
   return (
     <>
       <FCreateSurveyForm />

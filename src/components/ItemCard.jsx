@@ -48,6 +48,18 @@ export default function ItemCard({
     if (onDelete) onDelete(s_id);
   };
 
+  const handleCopyLink = (e) => {
+    e.stopPropagation();
+    setMenuOpen(false);
+    const url = `${window.location.origin}/respond/${s_id}`;
+    navigator.clipboard.writeText(url)
+      .then(() => alert("Link copied to clipboard!"))
+      .catch((err) => {
+        console.error("Failed to copy link:", err);
+        alert("Failed to copy link.");
+      });
+  };
+
   return (
     <div
       className="w-full flex justify-between items-center h-[133px] bg-white rounded-full shadow-md py-4 px-4 mb-4 relative cursor-pointer"
@@ -66,7 +78,7 @@ export default function ItemCard({
       <div className="absolute right-20 flex gap-10 items-center">
         <div className="flex flex-col items-center">
           <p className="font-bold text-[44px]">{responses}</p>
-          <p className="font-semibold text-gray-subtitle">Responses</p>
+          <p className="font-semibold text-gray-subtitle">Question</p>
         </div>
 
         <div className="relative">
@@ -87,6 +99,14 @@ export default function ItemCard({
               >
                 Edit Survey
               </button>
+
+              <button
+                className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                onClick={handleCopyLink}
+              >
+                Copy Link
+              </button>
+
               <button
                 className="block w-full px-4 py-2 text-left hover:bg-gray-100 text-red-600"
                 onClick={handleDelete}

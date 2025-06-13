@@ -1,9 +1,11 @@
-//ANSWER THE SURVEY
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-function fRespondSurveyForm() {
+function RespondSurveyForm() {
+  const { surveyId } = useParams(); // Get ID from URL
   const [survey, setSurvey] = useState(null);
   const [answers, setAnswers] = useState([]);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     const surveys = JSON.parse(localStorage.getItem("surveys") || "[]");
@@ -14,12 +16,18 @@ function fRespondSurveyForm() {
       return;
     }
 
-    const found = surveys[0]; // Just use the first survey for now
-    console.log("Using survey:", found);
+    const found = surveys.find((s) => String(s.s_id) === surveyId); // Match surveyId
 
+    if (!found) {
+      console.warn("Survey with the given ID not found.");
+      setNotFound(true);
+      return;
+    }
+
+    console.log("Using survey:", found);
     setSurvey(found);
     setAnswers(new Array(found.questions.length).fill(""));
-  }, []);
+  }, [surveyId]);
 
   const handleChange = (index, value) => {
     const updated = [...answers];
@@ -48,7 +56,17 @@ function fRespondSurveyForm() {
     alert("Response submitted!");
   };
 
-  if (!survey) return <div className="p-8 text-center">Loading survey...</div>;
+  if (notFound) {
+    return (
+      <div className="p-8 text-center text-red-600 font-semibold">
+        Survey not found.
+      </div>
+    );
+  }
+
+  if (!survey) {
+    return <div className="p-8 text-center">Loading survey...</div>;
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-xl shadow-md space-y-6">
@@ -102,6 +120,8 @@ function fRespondSurveyForm() {
 
 export default function RespondPage() {
   return (
-    <div className="min-h-screen bg-gray-100 p-8">{fRespondSurveyForm()}</div>
+    <div className="min-h-screen bg-gray-100 p-8">
+      <RespondSurveyForm />
+    </div>
   );
 }
