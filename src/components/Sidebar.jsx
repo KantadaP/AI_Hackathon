@@ -27,6 +27,7 @@ export default function Sidebar() {
       title: "Upgrade",
       path: "/dashboard/upgrade",
     },
+    
   ];
 
   const navigate = useNavigate();

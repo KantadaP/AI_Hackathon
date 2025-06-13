@@ -9,6 +9,10 @@ import DarftPage from "./pages/DarftPage.jsx";
 import InactivePage from "./pages/InactivePage.jsx";
 import UpgradePage from "./pages/UpgradePage.jsx";
 import AddPage from "./pages/AddPage.jsx";
+import SummaryPage from "./pages/SummaryPage.jsx";
+import AllQuestionPage from "./pages/AllQuestionPage.jsx";
+import MainSummaryContent from "./pages/MainSummaryContent.jsx";
+import AllRespondPage from "./pages/AllRespondPage.jsx";
 
 import ChatPage from "./pages/AddPage/ChatPage.jsx";
 import EditPage from "./pages/AddPage/EditPage.jsx";
@@ -51,6 +55,15 @@ const router = createBrowserRouter([
       { path: "1", element: <Backend1 /> },
       { path: "2", element: <Backend2 /> },
       { path: "3", element: <Backend3 /> },
+    ],
+  },
+  {
+    path: "/Summary",
+    element: <SummaryPage />,
+    children: [
+      { index: true, element: <MainSummaryContent /> },
+      { path: "Question", element: <AllQuestionPage/> },
+      { path: "Respond", element: <AllRespondPage/> },
     ],
   },
   {
