@@ -1,33 +1,42 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 export default function AllRespondPage() {
+  const { surveyId } = useParams();
   const [survey, setSurvey] = useState(null);
   const [responses, setResponses] = useState([]);
 
   useEffect(() => {
-    // Load surveys from localStorage
     const surveys = JSON.parse(localStorage.getItem("surveys") || "[]");
     if (surveys.length === 0) {
       console.warn("No surveys found in localStorage.");
+      setSurvey(null);
+      setResponses([]);
       return;
     }
 
-    const firstSurvey = surveys[0];
-    setSurvey(firstSurvey);
+    const foundSurvey = surveys.find((s) => String(s.s_id) === surveyId);
+    if (!foundSurvey) {
+      console.warn(`Survey with id ${surveyId} not found.`);
+      setSurvey(null);
+      setResponses([]);
+      return;
+    }
 
-    // Load responses for that survey
-    const key = `responses_${firstSurvey.s_id}`;
+    setSurvey(foundSurvey);
+
+    const key = `responses_${foundSurvey.s_id}`;
     const storedResponses = JSON.parse(localStorage.getItem(key) || "[]");
     setResponses(storedResponses);
-  }, []);
+  }, [surveyId]);
 
   if (!survey) {
-    return <div className="p-8 text-center">Loading survey...</div>;
+    return <div className="p-8 text-center text-red-500">Survey not found.</div>;
   }
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-xl shadow-md space-y-6">
-      <h1 className="text-2xl font-bold">All Responses for Survey: {survey.s_id}</h1>
+      <h1 className="text-2xl font-bold">All Responses for Survey: {survey.name || survey.s_id}</h1>
 
       {responses.length === 0 ? (
         <p>No responses yet.</p>

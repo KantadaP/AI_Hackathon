@@ -4,16 +4,18 @@ import { useParams } from "react-router-dom";
 export default function AllQuestionPage() {
   const { surveyId } = useParams();
 
-  // Get surveys from localStorage
   const surveys = JSON.parse(localStorage.getItem("surveys")) || [];
+  const survey = surveys.find((s) => String(s.s_id) === surveyId);
 
-  // Find the survey by ID or fallback to the first survey if no ID or not found
-  const survey =
-    surveys.find((s) => String(s.s_id) === surveyId) || surveys[0] || null;
+  if (!survey) {
+    return <p className="text-red-500">Survey not found.</p>;
+  }
 
   return (
     <div className="p-6">
-      {survey ? (
+      {survey.questions.length === 0 ? (
+        <p>No questions found in this survey.</p>
+      ) : (
         <div className="space-y-4">
           {survey.questions.map((q, index) => (
             <div
@@ -33,8 +35,6 @@ export default function AllQuestionPage() {
             </div>
           ))}
         </div>
-      ) : (
-        <p className="text-red-500">No surveys or questions found.</p>
       )}
     </div>
   );

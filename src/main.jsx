@@ -58,13 +58,13 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/Summary",
-    element: <SummaryPage />,
-    children: [
-      { index: true, element: <MainSummaryContent /> },
-      { path: "Question", element: <AllQuestionPage/> },
-      { path: "Respond", element: <AllRespondPage/> },
-    ],
+    path: "/summary/:surveyId",
+  element: <SummaryPage />,
+  children: [
+    { index: true, element: <MainSummaryContent /> },
+    { path: "question", element: <AllQuestionPage /> },
+    { path: "respond", element: <AllRespondPage /> },
+  ],
   },
   {
     path: "/respond",
