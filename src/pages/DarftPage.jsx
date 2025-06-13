@@ -21,8 +21,16 @@ export default function DraftPage() {
     }
   }, []);
 
-  const handleNavigation = (id) => {
-    navigate(`/dashboard/summary/${id}`);
+  const handleDelete = (id) => {
+    if (!window.confirm("Are you sure you want to delete this draft?")) return;
+
+    const updatedDrafts = draftSurveys.filter((survey) => survey.s_id !== id);
+    setDraftSurveys(updatedDrafts);
+
+    // Also update localStorage removing the draft
+    const allSurveys = JSON.parse(localStorage.getItem("surveys") || "[]");
+    const filteredAll = allSurveys.filter((survey) => survey.s_id !== id);
+    localStorage.setItem("surveys", JSON.stringify(filteredAll));
   };
 
   return (
@@ -33,13 +41,16 @@ export default function DraftPage() {
           draftSurveys.map((survey) => (
             <ItemCard
               key={survey.s_id}
+              s_id={survey.s_id} // For delete/edit
               icon="fa-regular fa-pen-to-square"
               title={survey.name}
               author="Kantada"
               createdDate={new Date(survey.createdAt).toDateString()}
               runningDate={new Date(survey.createdAt).toDateString()}
               responses={survey.questions?.length || 0}
-              onClick={() => handleNavigation(survey.s_id)}
+              path={`/summary/${survey.s_id}`} // navigation on card click
+              onDelete={handleDelete} // pass delete handler
+              editPath={`/dashboard/add/${survey.s_id}`} // pass edit path for 3-dot menu
             />
           ))
         ) : (
