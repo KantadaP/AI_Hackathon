@@ -11,7 +11,7 @@ function App({ agent_id }) {
   useEffect(() => {
     const startNewThread = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/thread");
+        const res = await axios.get("https://survery.onrender.com/thread");
         setThreadId(res.data.threadId);
       } catch (err) {
         console.error("Failed to create thread", err);
@@ -55,7 +55,7 @@ function App({ agent_id }) {
     }
 
     try {
-      const res = await axios.post("http://localhost:8000/chat", {
+      const res = await axios.post("https://survery.onrender.com/chat", {
         message: input,
         threadId,
         agent_ai: agent_id,

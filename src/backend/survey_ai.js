@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 dotenv.config(); // Load .env
 
 const app = express();
-app.use(cors({ origin: "https://your-frontend.vercel.app" })); // change to actual domain
+app.use(cors({ origin: "https://survery.vercel.app" })); // change to actual domain
 app.use(bodyParser.json());
 
 // Secure config from .env

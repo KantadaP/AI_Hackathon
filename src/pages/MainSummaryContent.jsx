@@ -13,7 +13,7 @@ function MainSummaryContent({ agent_id }) {
 
   useEffect(() => {
     const initThread = async () => {
-      const res = await axios.get("http://localhost:8000/thread");
+      const res = await axios.get("https://survery.onrender.com/thread");
       setThreadId(res.data.threadId);
       console.log("Thread summarize created:", res.data.threadId);
 
@@ -26,7 +26,7 @@ function MainSummaryContent({ agent_id }) {
         }
 
         // Send the readable survey data text as initial message to the thread
-        await axios.post("http://localhost:8000/chat", {
+        await axios.post("https://survery.onrender.com/chat", {
           message: raw,
           threadId: res.data.threadId,
           agent_ai: agent_id,
@@ -51,7 +51,7 @@ function MainSummaryContent({ agent_id }) {
     setIsThinking(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/chat", {
+      const res = await axios.post("https://survery.onrender.com/chat", {
         message: input,
         threadId,
         agent_ai: agent_id,
