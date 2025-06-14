@@ -3,16 +3,44 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { AIProjectClient } from "@azure/ai-projects";
-import { AzureKeyCredential } from "@azure/core-auth"; // Secure credential
+import { AzureKeyCredential } from "@azure/core-auth";
 import dotenv from "dotenv";
 
-dotenv.config(); // Load .env
+dotenv.config(); // Load env variables early
 
 const app = express();
-app.use(cors({ origin: "https://survery.vercel.app" })); // change to actual domain
+
+// CORS setup to allow your production and Vercel preview URLs dynamically
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow tools like Postman, server-to-server calls
+
+    const allowedOrigins = [
+      "https://survery.vercel.app",
+      // add any other known origins here if needed
+    ];
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Allow dynamic Vercel preview URLs like:
+    // https://survery-<randomstring>-kantadaps-projects.vercel.app
+    const vercelPreviewRegex = /^https:\/\/survery-[a-z0-9]+-kantadaps-projects\.vercel\.app$/;
+    if (vercelPreviewRegex.test(origin)) {
+      return callback(null, true);
+    }
+
+    callback(new Error(`CORS policy: Origin ${origin} not allowed.`));
+  }
+}));
+
 app.use(bodyParser.json());
 
-// Secure config from .env
+app.get("/", (req, res) => {
+  res.send("Survey backend is live");
+});
+
 const apiKey = process.env.AZURE_API_KEY;
 const projectUrl = process.env.PROJECT_URL;
 
@@ -92,11 +120,12 @@ app.get("/thread", async (req, res) => {
     const thread = await project.agents.threads.create();
     res.json({ threadId: thread.id });
   } catch (err) {
+    console.error("Error creating thread:", err);
     res.status(500).json({ error: "Could not create new thread" });
   }
 });
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
