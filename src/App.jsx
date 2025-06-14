@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import TopBar from "./components/TopBar"; // ✅ Make sure this path is correct
+import ReactMarkdown from "react-markdown";
 
 function App({ agent_id }) {
   const [messages, setMessages] = useState([]);
@@ -9,6 +10,8 @@ function App({ agent_id }) {
   const [isThinking, setIsThinking] = useState(false);
 
   useEffect(() => {
+    if (threadId) return;
+    
     const startNewThread = async () => {
       try {
         const res = await axios.get("http://localhost:8000/thread");
@@ -105,7 +108,7 @@ function App({ agent_id }) {
                     : "bg-gray-300 text-gray-800"
                 }`}
               >
-                {msg.content}
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
               </div>
             </div>
           ))}

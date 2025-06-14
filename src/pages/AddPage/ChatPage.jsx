@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router";
 import { useContext } from "react";
 import { QuestionsContext } from "../../contexts/QuestionsContext"; // adjust path if needed
+import ReactMarkdown from "react-markdown";
 
 function ChatPage({ agent_id }) {
   const [messages, setMessages] = useState([]);
@@ -14,6 +15,8 @@ function ChatPage({ agent_id }) {
   const { setQuestions } = useContext(QuestionsContext);
 
   useEffect(() => {
+    if (threadId) return;
+    
     const startNewThread = async () => {
       try {
         const res = await axios.get("http://localhost:8000/thread");
@@ -97,7 +100,7 @@ function ChatPage({ agent_id }) {
                   : "bg-gray-300 text-gray-800"
               }`}
             >
-              {msg.content}
+              <ReactMarkdown>{msg.content}</ReactMarkdown>
             </div>
           </div>
         ))}
@@ -118,12 +121,12 @@ function ChatPage({ agent_id }) {
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           placeholder="Type your message..."
         />
-        <button
+        {/* <button
           className="bg-green-button text-white px-4 py-2 hover:bg-lime-400 transition-colors duration-200"
           onClick={sendMessage}
         >
           <i className="fa-solid fa-paperclip"></i>
-        </button>
+        </button> */}
         <button
           className="bg-green-button text-white px-4 py-2 rounded-r hover:bg-lime-400 transition-colors duration-200"
           onClick={sendMessage}

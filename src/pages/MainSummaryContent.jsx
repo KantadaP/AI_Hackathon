@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router";
+import ReactMarkdown from "react-markdown";
 
 function MainSummaryContent({ agent_id }) {
   const [messages, setMessages] = useState([]);
@@ -12,12 +13,15 @@ function MainSummaryContent({ agent_id }) {
   agent_id = "asst_PNbAvoIntsdYhNwihVhn8NK6";
 
   useEffect(() => {
+    if (threadId) return;
+    
     const initThread = async () => {
-      const res = await axios.get("http://localhost:8000/thread");
-      setThreadId(res.data.threadId);
-      console.log("Thread summarize created:", res.data.threadId);
-
       try {
+        const res = await axios.get("http://localhost:8000/thread");
+        const thread = res.data.threadId;
+        setThreadId(thread);
+        console.log("Thread summarize created:", thread);
+
         const key = `responses_${surveyId}`;
         const raw = localStorage.getItem(key);
         if (!raw) {
@@ -25,17 +29,25 @@ function MainSummaryContent({ agent_id }) {
           return;
         }
 
-        // Send the readable survey data text as initial message to the thread
-        await axios.post("http://localhost:8000/chat", {
+        // Send the survey data
+        const sendRes = await axios.post("http://localhost:8000/chat", {
           message: raw,
-          threadId: res.data.threadId,
+          threadId: thread,
           agent_ai: agent_id,
         });
-        } catch (err) {
-          console.error("Failed to get survey responses, create thread or send initial data", err);
+
+        // Add assistant's initial response to messages
+        const botMsg = {
+          role: "assistant",
+          content: sendRes.data.content || "Assistant received the data.",
+        };
+        setMessages([botMsg]);
+      } catch (err) {
+        console.error("Failed during thread init or initial message send", err);
       }
     };
-      initThread();
+
+    initThread();
   }, [surveyId, agent_id]);
 
   const sendMessage = async () => {
@@ -85,7 +97,7 @@ function MainSummaryContent({ agent_id }) {
                   : "bg-gray-300 text-gray-800"
               }`}
             >
-              {msg.content}
+              <ReactMarkdown>{msg.content}</ReactMarkdown>
             </div>
           </div>
         ))}
