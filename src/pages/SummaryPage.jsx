@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 
 export default function SummaryPage() {
   const handleOpen = () => {
-    window.open("http://localhost:5173/respond", "_blank");
+    window.open("https://survery.vercel.app/respond", "_blank");
   };
 
   return (

@@ -17,7 +17,7 @@ export default function AddPage() {
     setSurveys(get_surveys)
   },[])
 
-  const myLink = "http://localhost:5173/respond";
+  const myLink = "https://survery.vercel.app/respond";
 
   const handleOpen = () => {
     navigate("/respond");
