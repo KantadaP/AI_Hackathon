@@ -2,24 +2,24 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import axios from "axios";
 import { AIProjectClient } from "@azure/ai-projects";
-import { DefaultAzureCredential } from "@azure/identity";
+import { AzureKeyCredential } from "@azure/core-auth"; // Secure credential
+import dotenv from "dotenv";
+
+dotenv.config(); // Load .env
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: "https://your-frontend.vercel.app" })); // change to actual domain
 app.use(bodyParser.json());
 
-const endpoint = "https://kanta-mbntewba-eastus2.openai.azure.com";
-const apiKey = "ef9vRYmIHHvXISGd4jMi3oI8huGNPACx3hWgJFfNcfQpNAE4NwKEJQQJ99BFACHYHv6XJ3w3AAAAACOGxhQ8";
-const apiVersion = "2024-02-15-preview";
+// Secure config from .env
+const apiKey = process.env.AZURE_API_KEY;
+const projectUrl = process.env.PROJECT_URL;
 
 async function runAgentConversation(contents, threadid, agent_ai) {
   console.log("runAgentConversation started");
-  const project = new AIProjectClient(
-    "https://kanta-mbntewba-eastus2.services.ai.azure.com/api/projects/kanta-mbntewba-eastus2-project",
-    new DefaultAzureCredential(apiKey)
-  );
+  const credential = new AzureKeyCredential(apiKey);
+  const project = new AIProjectClient(projectUrl, credential);
 
   try {
     const agent = await project.agents.getAgent(agent_ai);
@@ -29,7 +29,7 @@ async function runAgentConversation(contents, threadid, agent_ai) {
     let run = await project.agents.runs.create(thread.id, agent.id);
 
     while (run.status === "queued" || run.status === "in_progress") {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       run = await project.agents.runs.get(thread.id, run.id);
     }
 
@@ -43,19 +43,25 @@ async function runAgentConversation(contents, threadid, agent_ai) {
       return "Agent run failed.";
     }
 
-    const messages = await project.agents.messages.list(thread.id, { order: "desc", top: 1 });
+    const messages = await project.agents.messages.list(thread.id, {
+      order: "desc",
+      top: 1,
+    });
     const latest = await messages.next();
     const m = latest.value;
 
     if (m && m.role === "assistant") {
-      const content = m.content.find(c => c.type === "text" && "text" in c);
+      const content = m.content.find((c) => c.type === "text" && "text" in c);
       return content?.text?.value || "No assistant response found.";
     }
 
     return "No assistant response found.";
   } catch (error) {
-    console.error("Error in runAgentConversation:", error.response?.data || error.message || error);
-    return "Agent conversation error.";
+    console.error(
+      "Error in runAgentConversation:",
+      error.response?.data || error.message || error
+    );
+    return "Agent conversation error. Please refresh screen and try again.";
   }
 }
 
@@ -67,7 +73,11 @@ app.post("/chat", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const enrichedInput = `Survey Data: ${JSON.stringify(surveys, null, 2)}\n\nUser: ${userMessage}`;
+    const enrichedInput = `Survey Data: ${JSON.stringify(
+      surveys,
+      null,
+      2
+    )}\n\nUser: ${userMessage}`;
     const reply = await runAgentConversation(enrichedInput, threadId, agent_ai);
     res.json({ content: reply });
   } catch (err) {
@@ -77,10 +87,8 @@ app.post("/chat", async (req, res) => {
 
 app.get("/thread", async (req, res) => {
   try {
-    const project = new AIProjectClient(
-      "https://kanta-mbntewba-eastus2.services.ai.azure.com/api/projects/kanta-mbntewba-eastus2-project",
-      new DefaultAzureCredential(apiKey)
-    );
+    const credential = new AzureKeyCredential(apiKey);
+    const project = new AIProjectClient(projectUrl, credential);
     const thread = await project.agents.threads.create();
     res.json({ threadId: thread.id });
   } catch (err) {
