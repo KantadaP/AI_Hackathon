@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import TopBar from "./components/TopBar"; // ✅ Make sure this path is correct
+import TopBar2 from "./components/Topbar2"; // ✅ Make sure this path is correct
 import ReactMarkdown from "react-markdown";
 
 function App({ agent_id }) {
@@ -82,7 +82,7 @@ function App({ agent_id }) {
     <div className="min-h-screen bg-gray-100">
       {/* 🔹 Full-width TopBar */}
       <div className="bg-white shadow p-4">
-        <TopBar />
+        <TopBar2 />
       </div>
 
       {/* 🔹 Expanded Chat Card Full Width */}
