@@ -39,7 +39,7 @@ export default function ItemCard({
   const handleEdit = (e) => {
     e.stopPropagation();
     setMenuOpen(false);
-    navigate(`/dashboard/add/${s_id}`);
+    navigate(`/summary/${s_id}/question`);
   };
 
   const handleDelete = (e) => {

@@ -17,6 +17,8 @@ function MainSummaryContent({ agent_id }) {
     
     const initThread = async () => {
       try {
+        setIsThinking(true);
+
         const res = await axios.get("http://localhost:8000/thread");
         const thread = res.data.threadId;
         setThreadId(thread);
@@ -44,6 +46,9 @@ function MainSummaryContent({ agent_id }) {
         setMessages([botMsg]);
       } catch (err) {
         console.error("Failed during thread init or initial message send", err);
+      }
+      finally {
+        setIsThinking(false); // Hide "..." after first message is in
       }
     };
 
